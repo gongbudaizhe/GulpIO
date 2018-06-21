@@ -334,8 +334,17 @@ class GulpChunk(object):
             if img.ndim > 2:
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             return img
+        
+        # TODO: slice_element can now be either a slice or a list. 
+        #       Should we still use the name slice to represent both?
+        if isinstance(slice_element, slice):
+          frame_infos_sliced = frame_infos[slice_element]
+        elif isinstance(slice_element, list):
+          frame_infos_sliced = [frame_infos[i] for i in slice_element]
+        else:
+          raise NotImplemented
         frames = [extract_frame(frame_info)
-                  for frame_info in frame_infos[slice_element]]
+                  for frame_info in frame_infos_sliced]
         return frames, meta_data
 
     def iter_all(self, accepted_ids=None, shuffle=False):
